@@ -10,6 +10,7 @@ import { ColumnType } from "../utils/enums";
 import { AddIcon } from "@chakra-ui/icons";
 import { ITask } from "../utils/models";
 import Task from "./Task";
+import useColumnTasks from "../hooks/useColumnTasks";
 
 type ColumnProps = {
   column: ColumnType;
@@ -22,30 +23,41 @@ const ColumnColorScheme: Record<ColumnType, string> = {
   Complete: "green",
 };
 
-const tasks: ITask[] = [
-  {
-    id: "1",
-    title: "Create a new project",
-    color: "blue.300",
-    column: ColumnType.TODO,
-  },
-  {
-    id: "2",
-    title: "Create a new project",
-    color: "red.300",
-    column: ColumnType.TODO,
-  },
-  {
-    id: "3",
-    title: "Create a new project",
-    color: "green.300",
-    column: ColumnType.TODO,
-  },
-];
+// const tasks: ITask[] = [
+//   {
+//     id: "1",
+//     title: "Create a new project",
+//     color: "blue.300",
+//     column: ColumnType.TODO,
+//   },
+//   {
+//     id: "2",
+//     title: "Create a new project",
+//     color: "red.300",
+//     column: ColumnType.TODO,
+//   },
+//   {
+//     id: "3",
+//     title: "Create a new project",
+//     color: "green.300",
+//     column: ColumnType.TODO,
+//   },
+// ];
 
 export default function Column({ column }: ColumnProps) {
+  const { tasks, addEmptyTask, deleteTask, updateTask } =
+    useColumnTasks(column);
+
   const ColumnTasks = tasks.map((task, index) => {
-    return <Task index={index} key={task.id} task={task} />;
+    return (
+      <Task
+        onDelete={deleteTask}
+        onUpdate={updateTask}
+        index={index}
+        key={task.id}
+        task={task}
+      />
+    );
   });
   return (
     <Box mx={2}>
@@ -72,6 +84,7 @@ export default function Column({ column }: ColumnProps) {
         colorScheme="black"
         aria-label="Add task"
         icon={<AddIcon />}
+        onClick={addEmptyTask}
       />
       <Stack
         direction={{ base: "row", md: "column" }}
